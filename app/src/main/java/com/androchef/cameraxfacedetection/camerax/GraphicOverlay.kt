@@ -1,6 +1,7 @@
 package com.androchef.cameraxfacedetection.camerax
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.RectF
@@ -25,16 +26,33 @@ open class GraphicOverlay(context: Context?, attrs: AttributeSet?) :
 
         fun calculateRect(height: Float, width: Float, boundingBoxT: Rect): RectF {
 
-            // why hight, width?
-            // because analyze image rotate value is 90
-            val scaleX = overlay.width.toFloat() / height
-            val scaleY = overlay.height.toFloat() / width
+            // for land scape
+            fun isLandScapeMode(): Boolean {
+                return overlay.context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+            }
+
+            fun whenLandScapeModeWidth(): Float {
+                return when(isLandScapeMode()) {
+                    true -> width
+                    false -> height
+                }
+            }
+
+            fun whenLandScapeModeHeight(): Float {
+                return when(isLandScapeMode()) {
+                    true -> height
+                    false -> width
+                }
+            }
+
+            val scaleX = overlay.width.toFloat() / whenLandScapeModeWidth()
+            val scaleY = overlay.height.toFloat() / whenLandScapeModeHeight()
             val scale = scaleX.coerceAtLeast(scaleY)
             overlay.mScale = scale
 
             // Calculate offset (we need to center the overlay on the target)
-            val offsetX = (overlay.width.toFloat() - ceil(height * scale)) / 2.0f
-            val offsetY = (overlay.height.toFloat() - ceil(width * scale)) / 2.0f
+            val offsetX = (overlay.width.toFloat() - ceil(whenLandScapeModeWidth() * scale)) / 2.0f
+            val offsetY = (overlay.height.toFloat() - ceil(whenLandScapeModeHeight() * scale)) / 2.0f
 
             overlay.mOffsetX = offsetX
             overlay.mOffsetY = offsetY

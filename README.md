@@ -1,5 +1,5 @@
 <p align="center">
- <center><img width="100%%"  src="files/demo-video.gif"></a></center>
+ <center><img width="300px"  src="files/demo-video.gif"></a></center>
 </p>
 
 # Face Detection using CameraX and MlKit (without Firebase)
